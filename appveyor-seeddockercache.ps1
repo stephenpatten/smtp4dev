@@ -14,12 +14,12 @@ foreach($build in $project.builds) {
         $artifact = @(Invoke-RestMethod -Uri "https://ci.appveyor.com/api/buildjobs/$jobid/artifacts" -Headers $headers)[0]
         
         if ($artifact) {
-            write-host "Found $($artifact.fileName)"
+            write-host "Using $($artifact.fileName)"
             Invoke-WebRequest -OutFile $artifact.fileName -Uri "https://ci.appveyor.com/api/buildjobs/$jobid/artifacts/$($artifact.fileName)"
-            docker load "$artifact.fileName"
+            docker load -i "$artifact.fileName"
             break;
         } else {
-            write-host "Build $($build.version) job $jobid has no artifcats"
+            write-host "Build $($build.version) job $jobid has no artifacts"
         }
     } else {
         write-host "Build $($build.version) has no matching job"
