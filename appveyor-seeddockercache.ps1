@@ -16,7 +16,10 @@ foreach($build in $project.builds) {
         if ($artifact) {
             write-host "Using $($artifact.fileName)"
             Invoke-WebRequest -OutFile $artifact.fileName -Uri "https://ci.appveyor.com/api/buildjobs/$jobid/artifacts/$($artifact.fileName)"
-            docker load -i "$($artifact.fileName)"
+            $tag = ((docker load -i "$($artifact.fileName)") -replace "Loaded image: ", "").Trim()
+            remove-item $artifact.fileName
+            write-host "Tagging $tag"
+            docker tag "$tag" rnwood/smtp4dev:buildcache
             break;
         } else {
             write-host "Build $($build.version) job $jobid has no artifacts"
