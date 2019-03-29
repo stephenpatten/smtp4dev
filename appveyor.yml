@@ -13,24 +13,24 @@ environment:
     secure: 5jWYD10eY+CLicPtEtSMng==
   FRAMEWORK: netcoreapp2.2
   matrix:
-    - RUNTIME: noruntime
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: win-x64    
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: linux-x64
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: osx-x64
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: win-x86
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: win-arm
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: linux-arm
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: docker
-      DOCKERPLATFORM: linux-amd64
-      DOCKERFILE: linux
-      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+    # - RUNTIME: noruntime
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - RUNTIME: win-x64    
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - RUNTIME: linux-x64
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - RUNTIME: osx-x64
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - RUNTIME: win-x86
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - RUNTIME: win-arm
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - RUNTIME: linux-arm
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - RUNTIME: docker
+    #   DOCKERPLATFORM: linux-amd64
+    #   DOCKERFILE: linux
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     - RUNTIME: docker
       DOCKERPLATFORM: windows-amd64
       DOCKERFILE: windows
@@ -74,7 +74,8 @@ install:
 build_script:
  - ps: |
     if ($env:RUNTIME -eq "docker") {
-      docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
+      & ./appveyor-seeddockercache.ps1
+      docker build --cache-from rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
       docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
 
     } else {
