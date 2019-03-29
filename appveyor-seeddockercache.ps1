@@ -1,4 +1,7 @@
-write-host "Looking for artifact on previous jobs for "
+$headers = @{
+    "Authorization" = "Bearer $($env:APPVEYORAPIKEY)"
+    "Content-type" = "application/json"
+  }
 $project = Invoke-RestMethod -Uri "https://ci.appveyor.com/api/projects/rnwood/smtp4dev/history?recordsnumber=50&branch=$($env:APPVEYOR_REPO_BRANCH)" -Headers $headers  -Method Get
 
 foreach($build in $project.builds) {
@@ -13,6 +16,8 @@ foreach($build in $project.builds) {
             Invoke-WebRequest -OutFile $artifact.fileName -Uri "https://ci.appveyor.com/api/buildjobs/$jobid/artifacts/$($artifact.fileName)"
             docker load "$artifact.fileName"
             break;
+        } else {
+
         }
     }
 }
