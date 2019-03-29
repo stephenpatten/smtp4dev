@@ -2,6 +2,8 @@ $headers = @{
     "Authorization" = "Bearer $($env:APPVEYORAPIKEY)"
     "Content-type" = "application/json"
   }
+
+write-host "Seeding docker cache for branch $($env:APPVEYOR_REPO_BRANCH) and job name $($env:APPVEYOR_JOB_NAME)"
 $project = Invoke-RestMethod -Uri "https://ci.appveyor.com/api/projects/rnwood/smtp4dev/history?recordsnumber=50&branch=$($env:APPVEYOR_REPO_BRANCH)" -Headers $headers  -Method Get
 
 foreach($build in $project.builds) {
@@ -17,7 +19,9 @@ foreach($build in $project.builds) {
             docker load "$artifact.fileName"
             break;
         } else {
-
+            write-host "Build $($build.version) job $jobid has no artifcats"
         }
+    } else {
+        write-host "Build $($build.version) has no matching job"
     }
 }
