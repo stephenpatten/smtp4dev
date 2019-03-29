@@ -16,7 +16,7 @@ foreach($build in $project.builds) {
         if ($artifact) {
             write-host "Using $($artifact.fileName)"
             Invoke-WebRequest -OutFile $artifact.fileName -Uri "https://ci.appveyor.com/api/buildjobs/$jobid/artifacts/$($artifact.fileName)"
-            docker load -i "$artifact.fileName"
+            docker load -i "$($artifact.fileName)"
             break;
         } else {
             write-host "Build $($build.version) job $jobid has no artifacts"
