@@ -3,8 +3,8 @@ $headers = @{
     "Content-type" = "application/json"
   }
 
-write-host "Seeding docker cache for branch $($env:APPVEYOR_REPO_BRANCH) and job name $($env:APPVEYOR_JOB_NAME)"
-$project = Invoke-RestMethod -Uri "https://ci.appveyor.com/api/projects/rnwood/smtp4dev/history?recordsnumber=50&branch=$($env:APPVEYOR_REPO_BRANCH)" -Headers $headers  -Method Get
+write-host "Seeding docker cache from previous jobs: $($env:APPVEYOR_JOB_NAME)"
+$project = Invoke-RestMethod -Uri "https://ci.appveyor.com/api/projects/rnwood/smtp4dev/history?recordsnumber=50" -Headers $headers  -Method Get
 
 foreach($build in $project.builds) {
     $builddetail = Invoke-RestMethod -Uri "https://ci.appveyor.com/api/projects/rnwood/smtp4dev/build/$($build.version)" -Headers $headers  -Method Get
