@@ -2,5 +2,5 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS runtime
 WORKDIR /app
 EXPOSE 80
 EXPOSE 25
-COPY Rnwood.Smtp4dev/out ./
+COPY Rnwood.Smtp4dev/out /app
 ENTRYPOINT ["Rnwood.Smtp4dev"]
