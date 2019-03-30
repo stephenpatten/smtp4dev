@@ -77,7 +77,7 @@ build_script:
       $ErrorActionPreference="Continue"
       docker pull rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 2>&1
       $ErrorActionPreference="Stop"
-      docker build --target build $cachefrom -m 4g -t rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
+      docker build --target build --cache-from rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -m 4g -t rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
       docker build  -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
       docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
 
@@ -99,7 +99,7 @@ before_deploy:
  - ps: |
     if ($env:RUNTIME -eq "docker") {
         "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
-        docker push rnwood/smtp4dev:appveyorcache
+        docker push rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3
         docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3
         docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
     }
