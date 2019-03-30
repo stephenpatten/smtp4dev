@@ -75,7 +75,12 @@ build_script:
  - ps: |
     if ($env:RUNTIME -eq "docker") {
       docker pull rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 2>&1
-      docker build --target build --cache-from rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -m 4g -t rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
+      if ((docker images -q rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 2>$null) -ne "") {
+        $cachefrom="--cache-from rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3"
+      }else {
+        $cachefrom=""
+      }
+      docker build --target build $cachefrom -m 4g -t rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
       docker build  -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
       docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
 
