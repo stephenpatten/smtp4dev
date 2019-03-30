@@ -1,6 +1,6 @@
 
 FROM microsoft/windowsservercore@sha256:c06b4bfaf634215ea194e6005450740f3a230b27c510cf8facab1e9c678f3a99 as build
-
+# This is a 1607 image which is available on the Appveyor agents
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
@@ -27,6 +27,8 @@ Remove-Item -Force aspnetcore.zip
 RUN $env:PATH = $('c:\sdk;{0}' -f $env:PATH) ;\
 [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine)
 
+ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE true
+
 WORKDIR /app
 
 # copy csproj and restore as distinct layers
@@ -49,7 +51,8 @@ WORKDIR /app/Rnwood.Smtp4dev
 RUN dotnet build -p:Version=$env:VERSION ; \
 dotnet publish -c Release -o out -p:Version=$env:VERSION
 
-FROM mcr.microsoft.com/windows/nanoserver:sac2016 as runtime
+FROM microsoft/nanoserver@sha256:8f78a4a7da4464973a5cd239732626141aec97e69ba3e4023357628630bc1ee2 as runtime
+# This is a 1607 image which is available on the Appveyor agents
 EXPOSE 80
 EXPOSE 25
 COPY --from=build /dotnet /dotnet
