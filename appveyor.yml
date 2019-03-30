@@ -87,8 +87,10 @@ build_script:
 after_build:
  - ps: |
     if ($env:RUNTIME -eq "docker") {
-       docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
-       7z a "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar.gz" "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
+       "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
+       docker push rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3
+       #docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
+       #7z a "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar.gz" "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
     } elseif ($env:RUNTIME -ne "noruntime") {
        dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:RUNTIME -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
     } else {
