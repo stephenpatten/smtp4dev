@@ -76,11 +76,6 @@ build_script:
     if ($env:RUNTIME -eq "docker") {
       $ErrorActionPreference="Stop"
       docker pull rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 2>&1
-      if ((docker images -q rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 2>$null) -ne "") {
-        $cachefrom="--cache-from rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3"
-      }else {
-        $cachefrom=""
-      }
       $ErrorActionPreference="Continue"
       docker build --target build $cachefrom -m 4g -t rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
       docker build  -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
