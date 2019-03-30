@@ -28,10 +28,12 @@ environment:
     #- RUNTIME: linux-arm
     #  APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: docker
+      DOTNETFRAMEWORK: linux-x64
       DOCKERPLATFORM: linux-amd64
       DOCKERFILE: linux
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     - RUNTIME: docker
+      DOTNETFRAMEWORK: win-x64
       DOCKERPLATFORM: windows-amd64
       DOCKERFILE: windows
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
@@ -73,35 +75,28 @@ install:
     }
 build_script:
  - ps: |
-    if ($env:RUNTIME -eq "docker") {
-      $ErrorActionPreference="Continue"
-      docker pull rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 2>&1
-      $ErrorActionPreference="Stop"
-      docker build --target build --cache-from rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -m 4g -t rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
-      docker build  -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
-      docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
-
-    } else {
-        dotnet build Smtp4dev.sln -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION
-    }
+    dotnet build Smtp4dev.sln -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION
 after_build:
  - ps: |
+    if ($env:RUNTIME -eq "noruntime") {
+      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -p:version=$env:APPVEYOR_BUILD_VERSION -o publish -p:PackAsTool=true
+      dotnet pack Rnwood.Smtp4dev -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION -p:PackAsTool=true
+    } elseif ($env:RUNTIME -eq "docker") {
+      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:DOTNETFRAMEWORK -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
+    } else {
+      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:RUNTIME -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
+    }
+
     if ($env:RUNTIME -eq "docker") {
-       "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
-       docker push rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3
        #docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
        #7z a "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar.gz" "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
-    } elseif ($env:RUNTIME -ne "noruntime") {
-       dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:RUNTIME -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
-    } else {
-       dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -p:version=$env:APPVEYOR_BUILD_VERSION -o publish -p:PackAsTool=true
-       dotnet pack Rnwood.Smtp4dev -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION -p:PackAsTool=true
+       docker build  -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
+       docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
     }
 before_deploy:
  - ps: |
     if ($env:RUNTIME -eq "docker") {
         "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
-        docker push rnwood/smtp4dev:appveyorcache-$($env:DOCKERPLATFORM)-v3
         docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3
         docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
     }
