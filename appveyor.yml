@@ -1,6 +1,6 @@
 version: 3.1.0-ci@{build}
 os: Visual Studio 2017
-configuration: Release
+CONFIGURATION: Release
 skip_tags: false
 branches:
   except:
@@ -70,31 +70,35 @@ init:
     
 install:
 - ps: |
+    $ErrorActionPreference="Stop"
     if ($env:RUNTIME -ne "docker") {
         cmd /c powershell Install-Product node ''
     }
 build_script:
  - ps: |
+    $ErrorActionPreference="Stop"
     dotnet build smtp4dev.sln -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION
 after_build:
  - ps: |
+    $ErrorActionPreference="Stop"
     if ($env:RUNTIME -eq "noruntime") {
-      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -p:version=$env:APPVEYOR_BUILD_VERSION -o publish -p:PackAsTool=true
-      dotnet pack Rnwood.Smtp4dev -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION -p:PackAsTool=true
+      dotnet publish Rnwood.Smtp4dev -c $env:CONFIGURATION -f $env:FRAMEWORK -p:version=$env:APPVEYOR_BUILD_VERSION -o publish -p:PackAsTool=true
+      dotnet pack Rnwood.Smtp4dev -c $env:CONFIGURATION -p:version=$env:APPVEYOR_BUILD_VERSION -p:PackAsTool=true
     } elseif ($env:RUNTIME -eq "docker") {
-      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:DOTNETRUNTIME -o publish -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
+      dotnet publish Rnwood.Smtp4dev -c $env:CONFIGURATION -f $env:FRAMEWORK -r $env:DOTNETRUNTIME -o publish -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
     } else {
-      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:RUNTIME -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
+      dotnet publish Rnwood.Smtp4dev -c $env:CONFIGURATION -f $env:FRAMEWORK -r $env:RUNTIME -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
     }
 
     if ($env:RUNTIME -eq "docker") {
        #docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
        #7z a "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar.gz" "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
-       docker build  -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
+       docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
        docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
     }
 before_deploy:
  - ps: |
+    $ErrorActionPreference="Stop"
     if ($env:RUNTIME -eq "docker") {
         "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
         docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3
@@ -102,6 +106,7 @@ before_deploy:
     }
 after_deploy:
  - ps: |
+    $ErrorActionPreference="Stop"
     if ($env:APPVEYOR_REPO_TAG -eq "false") {
       $headers = @{
         "Authorization" = "Bearer $($env:APPVEYORAPIKEY)"
