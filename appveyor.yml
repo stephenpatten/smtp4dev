@@ -5,6 +5,7 @@ skip_tags: false
 branches:
   except:
     - azure-pipelines
+stack: node 10
 environment:
   APPVEYORAPIKEY:
     secure: f6ZDvXLvu8fryoFvnGfIUdpvlUC6Rft/qZKbWGh5CFw=
@@ -70,7 +71,9 @@ init:
     
 install:
 - ps: |
-    Install-Product node ''
+   if ($env:APPVEYOR_BUILD_WORKER_IMAGE -ne "Ubuntu") { 
+      Install-Product node ''
+   }
 build_script:
  - ps: |
     $ErrorActionPreference="Stop"
