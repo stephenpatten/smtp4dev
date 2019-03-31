@@ -3,7 +3,7 @@ FROM microsoft/nanoserver@sha256:8f78a4a7da4464973a5cd239732626141aec97e69ba3e40
 EXPOSE 80
 EXPOSE 25
 
-COPY Rnwood.Smtp4dev/publish /app
+COPY Rnwood.Smtp4dev/docker /app
 
 ENV ASPNETCORE_URLS=http://+:80 \
 DOTNET_RUNNING_IN_CONTAINER=true
