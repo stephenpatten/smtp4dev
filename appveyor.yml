@@ -15,19 +15,19 @@ environment:
   FRAMEWORK: netcoreapp2.2
   matrix:
     - RUNTIME: noruntime
-     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: win-x64    
-     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: linux-x64
-     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: osx-x64
-     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: win-x86
-     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: win-arm
-     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: linux-arm
-     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: docker
       DOTNETRUNTIME: linux-x64
       DOCKERPLATFORM: linux-amd64
@@ -72,7 +72,7 @@ init:
 install:
 - ps: |
    if ($env:APPVEYOR_BUILD_WORKER_IMAGE -ne "Ubuntu") { 
-      cmd /c Install-Product node ''
+      cmd /c powershell Install-Product node ''
    }
 build_script:
  - ps: |
