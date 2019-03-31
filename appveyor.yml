@@ -97,7 +97,7 @@ after_build:
           "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
           docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
        }
-   }
+    }
 before_deploy:
  - ps: |
     $ErrorActionPreference="Stop"
