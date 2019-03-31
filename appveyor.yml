@@ -70,8 +70,7 @@ init:
     
 install:
 - ps: |
-    $ErrorActionPreference="Stop"
-    cmd /c powershell Install-Product node ''
+    Install-Product node ''
 build_script:
  - ps: |
     $ErrorActionPreference="Stop"
