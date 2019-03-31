@@ -71,9 +71,7 @@ init:
 install:
 - ps: |
     $ErrorActionPreference="Stop"
-    if ($env:RUNTIME -ne "docker") {
-        cmd /c powershell Install-Product node ''
-    }
+    cmd /c powershell Install-Product node ''
 build_script:
  - ps: |
     $ErrorActionPreference="Stop"
@@ -91,10 +89,9 @@ after_build:
     }
 
     if ($env:RUNTIME -eq "docker") {
-       #docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
-       #7z a "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar.gz" "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
        docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
        docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
+       docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
     }
 before_deploy:
  - ps: |
@@ -120,7 +117,7 @@ after_deploy:
       }
     }
 artifacts:
-- path: '*.tar.gz'
+- path: '*.tar'
 - path: Rnwood.Smtp4dev\publish
   name: Smtp4dev-$(runtime)-v$(appveyor_build_version)
   type: zip
