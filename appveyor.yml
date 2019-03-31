@@ -91,17 +91,19 @@ after_build:
     }
 
     if ($env:RUNTIME -eq "docker") {
-       docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
-       docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
-       docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
-    }
+       docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION) -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
+       
+       if ($env:DOCKERPASSWORD) {
+          "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
+          docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
+       }
+   }
 before_deploy:
  - ps: |
     $ErrorActionPreference="Stop"
     if ($env:RUNTIME -eq "docker") {
-        "$env:DOCKERPASSWORD" | docker login -u "$env:DOCKERUSERNAME" --password-stdin
+        docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION) rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 
         docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3
-        docker push rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
     }
 after_deploy:
  - ps: |
