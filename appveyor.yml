@@ -93,7 +93,7 @@ after_build:
     if ($env:RUNTIME -eq "docker") {
        docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
        docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
-       docker image save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
+       docker save "rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)" -o "Smtp4dev-docker-$($env:DOCKERPLATFORM)-v$($env:APPVEYOR_BUILD_VERSION).tar"
     }
 before_deploy:
  - ps: |
