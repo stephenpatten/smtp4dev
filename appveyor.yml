@@ -75,14 +75,14 @@ install:
     }
 build_script:
  - ps: |
-    dotnet build Smtp4dev.sln -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION
+    dotnet build smtp4dev.sln -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION
 after_build:
  - ps: |
     if ($env:RUNTIME -eq "noruntime") {
       dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -p:version=$env:APPVEYOR_BUILD_VERSION -o publish -p:PackAsTool=true
       dotnet pack Rnwood.Smtp4dev -c $env:Configuration -p:version=$env:APPVEYOR_BUILD_VERSION -p:PackAsTool=true
     } elseif ($env:RUNTIME -eq "docker") {
-      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:DOTNETRUNTIME  -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
+      dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:DOTNETRUNTIME -o publish -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
     } else {
       dotnet publish Rnwood.Smtp4dev -c $env:Configuration -f $env:FRAMEWORK -r $env:RUNTIME -p:version=$env:APPVEYOR_BUILD_VERSION -o publish
     }
