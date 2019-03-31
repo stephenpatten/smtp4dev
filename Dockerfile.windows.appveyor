@@ -9,4 +9,4 @@ ENV ASPNETCORE_URLS=http://+:80 \
 DOTNET_RUNNING_IN_CONTAINER=true
 
 WORKDIR /app
-ENTRYPOINT ["Rnwood.Smtp4dev"]
+ENTRYPOINT ["./Rnwood.Smtp4dev.exe"]

@@ -3,4 +3,4 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 25
 COPY Rnwood.Smtp4dev/docker /app
-ENTRYPOINT ["Rnwood.Smtp4dev"]
+ENTRYPOINT ["./Rnwood.Smtp4dev"]
