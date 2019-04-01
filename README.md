@@ -46,17 +46,13 @@ smtp4dev
 
 
 ## How to run smtp4dev in Docker
-Docker images for both Windows and Linux are available. To run with the web interface on port 3000 and SMTP on port 2525:
-
-**Linux or Linux Containers on Windows/Other-OSs:**
+Docker images are available. To run with the web interface on port 3000 and SMTP on port 2525:
 ```
 docker run -p 3000:80 -p 2525:25 rnwood/smtp4dev:linux-amd64-v3
 ```
-**Windows:**
-```
-docker run -p 3000:80 -p 2525:25 rnwood/smtp4dev:windows-amd64-v3
-```
-Sorry no unified cross platform image tag available yet. To see the full list of available tags [see the Docker hub page for smtp4dev](https://hub.docker.com/r/rnwood/smtp4dev/tags/).
+This image will also work on Docker for Windows running in Linux mode, or if you're running Docker >= 18.02 on Windows in Windows mode too.
+
+To see the full list of available tags [see the Docker hub page for smtp4dev](https://hub.docker.com/r/rnwood/smtp4dev/tags/).
 
 ## How to run smtp4dev as a service (Windows only)
 

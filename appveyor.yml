@@ -21,20 +21,10 @@ environment:
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: osx-x64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: win-x86
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: win-arm
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - RUNTIME: linux-arm
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - RUNTIME: docker
       DOCKERPLATFORM: linux-amd64
-      DOCKERFILE: linux
+      DOCKERFILE: Dockerfile
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
-    - RUNTIME: docker
-      DOCKERPLATFORM: windows-amd64
-      DOCKERFILE: windows
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
 assembly_info:
   patch: true
   file: '**\SolutionInfo.*'
@@ -74,7 +64,7 @@ install:
 build_script:
  - ps: |
     if ($env:RUNTIME -eq "docker") {
-      docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f Dockerfile.$($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
+      docker build -m 4g -t rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 -f $($env:DOCKERFILE) --build-arg version=$env:APPVEYOR_BUILD_VERSION .
       docker tag rnwood/smtp4dev:$($env:DOCKERPLATFORM)-v3 rnwood/smtp4dev:$($env:DOCKERPLATFORM)-$($env:APPVEYOR_BUILD_VERSION)
 
     } else {

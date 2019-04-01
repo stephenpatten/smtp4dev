@@ -1,6 +1,0 @@
-FROM mcr.microsoft.com/dotnet/core/runtime-deps:2.2 AS runtime
-WORKDIR /app
-EXPOSE 80
-EXPOSE 25
-COPY Rnwood.Smtp4dev/docker /app
-ENTRYPOINT ["./Rnwood.Smtp4dev"]
